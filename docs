@@ -1,0 +1,48 @@
+In Spring, a bean is just an object that is:
+
+ ✅ Created,
+ ✅ Managed, and
+ ✅ Wired (injected into other objects)
+ by the Spring container (also called the ApplicationContext).
+
+What Makes It a "Bean"?
+An object becomes a Spring bean when:
+
+You annotate it with @Component (or similar), OR
+Beans are defined using:
+@Component (generic stereotype)
+@Service (business logic layer)
+@Repository (data access layer)
+@Controller (web layer)
+@Configuration + @Bean (for custom bean definitions)
+
+You return it from a method annotated with @Bean inside a @Configuration class
+Once declared as a bean, Spring takes over its lifecycle — like instantiating it,
+injecting it into other beans, and even destroying it when the app shuts down.
+
+Instead of manually creating an Author object everywhere in your code:
+Author author = new Author("John Doe");
+
+Spring will do it for you, and you can just inject it wherever needed using @Autowired
+@Autowired
+private Author author;
+
+❓ 1. Why are we using AuthorConfig configuration? Could we not make Author class a bean with @Component annotation?
+Yes, you could use @Component instead of @Configuration + @Bean, but there are tradeoffs:
+
+Option 1: @Component on Author
+But then you can't easily pass parameters to the constructor, unless you use something like @Value or
+configuration properties. So you lose some control over initialization.
+
+✅ Option 2: @Configuration + @Bean (your original)
+This gives you full control:
+✔️ Use this when you want to:
+Configure constructor parameters manually
+Register 3rd-party classes that you can’t annotate with @Component
+Separate configuration logic
+
+❓ 3. Does AuthorConfig make Author class a bean or itself?
+Both!
+@Configuration marks AuthorConfig as a special class containing @Bean factory methods.
+The method author() is annotated with @Bean, so its return value (Author object) is registered as a bean.
+Spring doesn't make AuthorConfig itself a bean unless something else depends on it (then yes, it can be injected too).
